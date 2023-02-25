@@ -15,7 +15,7 @@ promotionRouter.route('/')
 })
 .put((req, res) => {
     res.statusCode = 403;
-    res.end('PUT operation not supported on /promotion');
+    res.end('PUT operation not supported on /promotions');
 })
 .delete((req, res) => {
     res.end('Deleting all promotions');
@@ -32,7 +32,7 @@ promotionRouter.route('/:promotionId')
 })
 .post((req, res) => {
     res.statusCode = 403;
-    res.end(`POST operation not supported on /promotion/${req.params.promotionId}`);
+    res.end(`POST operation not supported on /promotions/${req.params.promotionId}`);
 })
 .put((req, res) => {
     res.write(`Updating the promotion: ${req.params.promotionId}\n`);
@@ -41,6 +41,41 @@ promotionRouter.route('/:promotionId')
 })
 .delete((req, res) => {
     res.end(`Deleting promotion: ${req.params.promotionId}`);
+});
+
+promotionRouter.route('/:promotionId')
+.get((req, res, next) => {
+    Promotion.findById(req.params.promotionId)
+    .then(promotion => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(promotion);
+    })
+    .catch(err => next(err));
+})
+.post((req, res) => {
+    res.statusCode = 403;
+    res.end(`POST operation not supported on /promotions/${req.params.promotionId}`);
+})
+.put((req, res, next) => {
+    Promotion.findByIdAndUpdate(req.params.promotionId, {
+        $set: req.body
+    }, { new: true })
+    .then(promotion => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(promotion);
+    })
+    .catch(err => next(err));
+})
+.delete((req, res, next) => {
+    Promotion.findByIdAndDelete(req.params.promotionId)
+    .then(response => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(response);
+    })
+    .catch(err => next(err));
 });
 
 module.exports = promotionRouter;
