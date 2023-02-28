@@ -51,13 +51,12 @@ promotionRouter.route('/:promotionId')
     res.end(`POST operation not supported on /promotions/${req.params.promotionId}`);
 })
 .put((req, res, next) => {
-    Promotion.findByIdAndUpdate(
-        req.params.promotionId,
-        { $set: req.body},
-        { new: true })
+    Promotion.findByIdAndUpdate(req.params.promotionId, {
+        $set: req.body
+    }, { new: true })
     .then(promotion => {
         res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
+        res.setHeader('Content-Type', 'application/json');
         res.json(promotion);
     })
     .catch(err => next(err));
